@@ -40,7 +40,7 @@ class Player(pygame.sprite.Sprite):
 
     recent_keys = pygame.key.get_just_pressed()
     if recent_keys[pygame.K_SPACE] and self.can_shoot:
-      Laser(laser_surf, self.rect.midtop, (all_sprites, laser_sprites))
+      Laser(laser_surf, self.rect.midtop, (all_sprites, laser_sprites)) #type: ignore
 
 
       self.can_shoot = False
@@ -65,8 +65,8 @@ class Meteor(pygame.sprite.Sprite):
 
 
   def update(self, dt):
-    self.rect.center += self.direction * self.speed * dt
-    if self.rect.top > WINDOW_HEIGHT:
+    self.rect.center += self.direction * self.speed * dt #type: ignore
+    if self.rect.top > WINDOW_HEIGHT: #type: ignore
       self.kill() 
 
 class Laser(pygame.sprite.Sprite):
@@ -77,9 +77,9 @@ class Laser(pygame.sprite.Sprite):
     self.speed = 600
 
   def update(self, dt):
-    self.rect.centery -= self.speed * dt
+    self.rect.centery -= self.speed * dt #type: ignore
 
-    if self.rect.bottom < 0:
+    if self.rect.bottom < 0: #type: ignore
       self.kill()
     
 def collisions():
