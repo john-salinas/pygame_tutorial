@@ -40,7 +40,7 @@ class Player(pygame.sprite.Sprite):
 
     recent_keys = pygame.key.get_just_pressed()
     if recent_keys[pygame.K_SPACE] and self.can_shoot:
-      Laser(laser_surf, self.rect.midtop, (all_sprites, laser_sprites)) #type: ignore
+      Laser(laser_surf, self.rect.midbottom, (all_sprites, laser_sprites)) #type: ignore
 
 
       self.can_shoot = False
@@ -82,12 +82,21 @@ class Laser(pygame.sprite.Sprite):
     if self.rect.bottom < 0: #type: ignore
       self.kill()
     
+
 def collisions():
   for laser in laser_sprites:
     collided_sprites = pygame.sprite.spritecollide(laser, meteor_sprites, True)
 
     if collided_sprites:
       laser.kill()
+
+def display_score(display_surface):
+  current_time = pygame.time.get_ticks() // 100
+  text_surf = font.render(str(current_time), True, (235, 52, 210))
+  text_rect = text_surf.get_frect(midbottom = (WINDOW_WIDTH / 2, WINDOW_HEIGHT - 50))
+  display_surface.blit(text_surf, text_rect)
+
+  pygame.draw.rect(display_surface, (240, 240, 240), text_rect.inflate(20,20).move(0, -8), 5, 10)
 
 
 # General setup
@@ -104,8 +113,7 @@ star_surf = pygame.image.load(os.path.join("..", "space 1 setup", "images", "sta
 meteor_surf = pygame.image.load(os.path.join("..", "space 1 setup", "images", "meteor.png")).convert_alpha()
 laser_surf = pygame.image.load(os.path.join("..", "space 1 setup", "images", "laser.png")).convert_alpha()
 player_surf = pygame.image.load(os.path.join("..", "space 1 setup", "images", "player.png")).convert_alpha()
-
-
+font = pygame.font.Font(os.path.join("..", "space 1 setup", "images", "Oxanium-Bold.ttf"), 40)
 
 # Sprite creation
 all_sprites = pygame.sprite.Group()
@@ -141,11 +149,11 @@ while running:
   # Collision checking  
   collisions()
 
-  display_surface.fill('darkgray')
-
-  # Drawing the game
+  display_surface.fill('#3a2e3f')
   all_sprites.draw(display_surface)
 
+  # displaying text
+  display_score(display_surface)
 
   pygame.display.update()
 
