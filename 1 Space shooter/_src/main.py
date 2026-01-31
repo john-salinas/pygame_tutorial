@@ -84,6 +84,14 @@ class Laser(pygame.sprite.Sprite):
     
 
 def collisions():
+  global running
+
+  # Checking if the player hits a meteor and closing the game if it happens
+  collision_sprites = pygame.sprite.spritecollide(player, meteor_sprites, True)
+  if collision_sprites:
+    running = False
+
+  # Checking for collisions between laser and meteor. Kills all sprites in related condition
   for laser in laser_sprites:
     collided_sprites = pygame.sprite.spritecollide(laser, meteor_sprites, True)
 
