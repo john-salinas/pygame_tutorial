@@ -87,7 +87,7 @@ def collisions():
   global running
 
   # Checking if the player hits a meteor and closing the game if it happens
-  collision_sprites = pygame.sprite.spritecollide(player, meteor_sprites, True)
+  collision_sprites = pygame.sprite.spritecollide(player, meteor_sprites, True, pygame.sprite.collide_mask)
   if collision_sprites:
     running = False
 
@@ -135,7 +135,7 @@ player = Player(all_sprites, player_surf)
 # Custom events
 # Interval timer
 meteor_event = pygame.event.custom_type()
-pygame.time.set_timer(meteor_event, 50)
+pygame.time.set_timer(meteor_event, 500)
 
 
 
