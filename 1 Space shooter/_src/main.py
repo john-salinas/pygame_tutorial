@@ -40,8 +40,8 @@ class Player(pygame.sprite.Sprite):
 
     recent_keys = pygame.key.get_just_pressed()
     if recent_keys[pygame.K_SPACE] and self.can_shoot:
-      Laser(laser_surf, self.rect.midbottom, (all_sprites, laser_sprites)) #type: ignore
-
+      Laser(laser_surf, self.rect.midtop, (all_sprites, laser_sprites)) #type: ignore
+      laser_sound.play()
 
       self.can_shoot = False
       self.laser_shoot_time = pygame.time.get_ticks()
@@ -122,6 +122,7 @@ def collisions():
 
     if collided_sprites:
       laser.kill()
+      explosion_sound.play()
       AnimatedExplosion(explosion_frames, laser.rect.midtop, all_sprites)
 
 def display_score(display_surface):
@@ -150,6 +151,12 @@ player_surf = pygame.image.load(os.path.join("..", "space 1 setup", "images", "p
 font = pygame.font.Font(os.path.join("..", "space 1 setup", "images", "Oxanium-Bold.ttf"), 40)
 explosion_frames = [pygame.image.load(os.path.join("..", "space 1 setup", "images", "explosion", f'{i}.png')).convert_alpha() for i in range(0, 21)]
 
+laser_sound = pygame.mixer.Sound(os.path.join("..", "space 1 setup", "audio", "laser.wav"))
+damage_sound = pygame.mixer.Sound(os.path.join("..", "space 1 setup", "audio", "damage.ogg"))
+explosion_sound = pygame.mixer.Sound(os.path.join("..", "space 1 setup", "audio", "explosion.wav"))
+game_music = pygame.mixer.Sound(os.path.join("..", "space 1 setup", "audio", "game_music.wav"))
+game_music.set_volume(0.2)
+game_music.play()
 
 # Sprite creation
 all_sprites = pygame.sprite.Group()
@@ -168,6 +175,7 @@ pygame.time.set_timer(meteor_event, 500)
 
 # Game loop
 while running:
+  # game_music.play()
   dt = clock.tick() / 1000
 
   # Event loop
