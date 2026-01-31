@@ -92,6 +92,20 @@ class Laser(pygame.sprite.Sprite):
     if self.rect.bottom < 0: #type: ignore
       self.kill()
 
+class AnimatedExplosion(pygame.sprite.Sprite):
+  def __init__(self, frames, pos, groups):
+    super().__init__(groups)
+    self.frames = frames
+    self.frame_index = 0
+    self.image = self.frames[self.frame_index]
+    self.rect = self.image.get_frect(center = pos)
+  
+  def update(self, dt):
+    self.frame_index += 50 * dt
+    if self.frame_index < len(self.frames):
+      self.image = self.frames[int(self.frame_index) % len(self.frames)]
+    else:
+      self.kill()
 
 
 def collisions():
@@ -108,6 +122,7 @@ def collisions():
 
     if collided_sprites:
       laser.kill()
+      AnimatedExplosion(explosion_frames, laser.rect.midtop, all_sprites)
 
 def display_score(display_surface):
   current_time = pygame.time.get_ticks() // 100
@@ -127,12 +142,14 @@ running = True
 clock = pygame.time.Clock()
 
 
-# Image imports
+# Imports
 star_surf = pygame.image.load(os.path.join("..", "space 1 setup", "images", "star.png")).convert_alpha()
 meteor_surf = pygame.image.load(os.path.join("..", "space 1 setup", "images", "meteor.png")).convert_alpha()
 laser_surf = pygame.image.load(os.path.join("..", "space 1 setup", "images", "laser.png")).convert_alpha()
 player_surf = pygame.image.load(os.path.join("..", "space 1 setup", "images", "player.png")).convert_alpha()
 font = pygame.font.Font(os.path.join("..", "space 1 setup", "images", "Oxanium-Bold.ttf"), 40)
+explosion_frames = [pygame.image.load(os.path.join("..", "space 1 setup", "images", "explosion", f'{i}.png')).convert_alpha() for i in range(0, 21)]
+
 
 # Sprite creation
 all_sprites = pygame.sprite.Group()
@@ -147,7 +164,6 @@ player = Player(all_sprites, player_surf)
 # Interval timer
 meteor_event = pygame.event.custom_type()
 pygame.time.set_timer(meteor_event, 500)
-
 
 
 # Game loop
