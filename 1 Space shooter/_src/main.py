@@ -57,14 +57,24 @@ class Star(pygame.sprite.Sprite):
 class Meteor(pygame.sprite.Sprite):
   def __init__(self, surface, pos, groups):
     super().__init__(groups)
-    self.image = surface
+    self.og_surface = surface
+    self.image = self.og_surface
     self.rect = self.image.get_frect(center = pos)
     self.direction = pygame.Vector2(uniform(-0.5, 0.5), 1)
+    
+    self.rotation = 0
+    self.rotation_speed = randint(10, 100)
 
     self.speed = randint(100, 500)
 
 
   def update(self, dt):
+    # Continuous rotation
+    self.rotation += self.rotation_speed * dt
+    self.image = pygame.transform.rotozoom(self.og_surface, self.rotation, 1)
+    self.rect = self.image.get_frect(center = self.rect.center)
+
+    # Random movement
     self.rect.center += self.direction * self.speed * dt #type: ignore
     if self.rect.top > WINDOW_HEIGHT: #type: ignore
       self.kill() 
@@ -81,15 +91,16 @@ class Laser(pygame.sprite.Sprite):
 
     if self.rect.bottom < 0: #type: ignore
       self.kill()
-    
+
+
 
 def collisions():
   global running
 
   # Checking if the player hits a meteor and closing the game if it happens
-  collision_sprites = pygame.sprite.spritecollide(player, meteor_sprites, True, pygame.sprite.collide_mask)
-  if collision_sprites:
-    running = False
+  # collision_sprites = pygame.sprite.spritecollide(player, meteor_sprites, True, pygame.sprite.collide_mask)
+  # if collision_sprites:
+    # running = False
 
   # Checking for collisions between laser and meteor. Kills all sprites in related condition
   for laser in laser_sprites:
