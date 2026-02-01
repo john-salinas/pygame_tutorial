@@ -1,4 +1,4 @@
-import pygame
+# import pygame
 import os
 from .settings import *
 
@@ -9,7 +9,9 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(center = pos)
 
         self.direction = pygame.math.Vector2()
-        self.speed = 300
+        self.og_speed = 300
+        self.speed = self.og_speed
+        self.sprint_speed = self.og_speed * 2
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -19,9 +21,9 @@ class Player(pygame.sprite.Sprite):
 
         # Sprint command
         if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]:
-            self.speed = 600
+            self.speed = self.sprint_speed
         else:
-            self.speed = 300
+            self.speed = self.og_speed
     
     def move(self, dt):
         self.rect.center += self.direction * self.speed * dt

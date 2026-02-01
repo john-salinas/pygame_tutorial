@@ -17,8 +17,6 @@ class Game:
         # Player
         self.player = src.Player((src.settings.WINDOW_WIDTH / 2, src.settings.WINDOW_HEIGHT / 2), self.all_sprites)
 
-
-
     def run(self):
         while self.running:
             # dt
