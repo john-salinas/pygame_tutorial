@@ -3,15 +3,19 @@ import os
 from .settings import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups):
+    def __init__(self, pos, groups, collision_sprites):
         super().__init__(groups)
         self.image = pygame.image.load(os.path.join("images", "player", "down", "0.png")).convert_alpha()
         self.rect = self.image.get_frect(center = pos)
+        self.hitbox_rect = self.rect.inflate(-40, 0)
 
+        # Movement
         self.direction = pygame.math.Vector2()
-        self.og_speed = 300
+        self.og_speed = PLAYER_SPEED
         self.speed = self.og_speed
         self.sprint_speed = self.og_speed * 2
+
+        self.collision_sprites = collision_sprites
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -26,8 +30,20 @@ class Player(pygame.sprite.Sprite):
             self.speed = self.og_speed
     
     def move(self, dt):
-        self.rect.center += self.direction * self.speed * dt
+        self.rect.x += self.direction.x * self.speed * dt
+        self.collision('horizontal')
+        self.rect.y += self.direction.y * self.speed * dt
+        self.collision('vertical')
     
+    def collision(self, direction):
+        for sprite in self.collision_sprites:
+            if sprite.rect.colliderect(self.rect):
+                if direction == "horizontal":
+                    if self.direction.x > 0: self.rect.right = sprite.rect.left
+                    if self.direction.x < 0: self.rect.left = sprite.rect.right
+                elif direction == "vertical":
+                    if self.direction.y > 0: self.rect.bottom = sprite.rect.top
+                    if self.direction.y < 0: self.rect.top = sprite.rect.bottom
 
 
 
