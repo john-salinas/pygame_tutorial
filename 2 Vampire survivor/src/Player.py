@@ -30,22 +30,33 @@ class Player(pygame.sprite.Sprite):
             self.speed = self.og_speed
     
     def move(self, dt):
-        self.rect.x += self.direction.x * self.speed * dt
+        self.hitbox_rect.x += self.direction.x * self.speed * dt
+        if (self.hitbox_rect.right >= WINDOW_WIDTH):
+            self.hitbox_rect.right = WINDOW_WIDTH
+        if (self.hitbox_rect.left <= 0):
+            self.hitbox_rect.left = 0
         self.collision('horizontal')
-        self.rect.y += self.direction.y * self.speed * dt
+
+
+        self.hitbox_rect.y += self.direction.y * self.speed * dt
+        if (self.hitbox_rect.bottom >= WINDOW_HEIGHT):
+            self.hitbox_rect.bottom = WINDOW_HEIGHT
+        if (self.hitbox_rect.top <= 0):
+            self.hitbox_rect.top = 0
         self.collision('vertical')
+
+        
+        self.rect.center = self.hitbox_rect.center
     
     def collision(self, direction):
         for sprite in self.collision_sprites:
-            if sprite.rect.colliderect(self.rect):
+            if sprite.rect.colliderect(self.hitbox_rect):
                 if direction == "horizontal":
-                    if self.direction.x > 0: self.rect.right = sprite.rect.left
-                    if self.direction.x < 0: self.rect.left = sprite.rect.right
+                    if self.direction.x > 0: self.hitbox_rect.right = sprite.rect.left
+                    if self.direction.x < 0: self.hitbox_rect.left = sprite.rect.right
                 elif direction == "vertical":
-                    if self.direction.y > 0: self.rect.bottom = sprite.rect.top
-                    if self.direction.y < 0: self.rect.top = sprite.rect.bottom
-
-
+                    if self.direction.y > 0: self.hitbox_rect.bottom = sprite.rect.top
+                    if self.direction.y < 0: self.hitbox_rect.top = sprite.rect.bottom
 
     def update(self, dt):
         self.input()
